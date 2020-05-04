@@ -7,6 +7,13 @@
           Welcome to your new project!
         </span>
         <system-information></system-information>
+          <vue-suggestion :items="displayedItems"
+                  v-model="item"
+                  :setLabel="setLabel"
+                  :itemTemplate="itemTemplate"
+                  @changed="inputChange"
+                  @selected="itemSelected">
+          </vue-suggestion>
       </div>
 
       <div class="right-side">
@@ -30,14 +37,41 @@
 </template>
 
 <script>
+  import { VueSuggestion } from 'vue-suggestion';
   import SystemInformation from './LandingPage/SystemInformation';
+  import itemTemplate from './LandingPage/ItemTemplate';
+
 
   export default {
     name: 'landing-page',
-    components: { SystemInformation },
+    components: { SystemInformation, VueSuggestion },
+    data() {
+      return {
+        item: {},
+        items: [
+          { id: 1, name: 'Golden Retriever' },
+          { id: 2, name: 'Cat' },
+          { id: 3, name: 'Squirrel' },
+        ],
+        displayedItems: [],
+        itemTemplate,
+      };
+    },
     methods: {
       open(link) {
         this.$electron.shell.openExternal(link);
+      },
+      itemSelected(item) {
+        this.item = item;
+        console.log(this.item);
+      },
+      setLabel(item) {
+        return item.name;
+      },
+      inputChange(text) {
+        // your search method
+        this.displayedItems = this.items.filter(item => item.name.includes(text));
+        // now `items` will be showed in the suggestion list
       },
     },
   };
@@ -55,12 +89,6 @@
   body { font-family: 'Source Sans Pro', sans-serif; }
 
   #wrapper {
-    background:
-      radial-gradient(
-        ellipse at top left,
-        rgba(255, 255, 255, 1) 40%,
-        rgba(229, 229, 229, .9) 100%
-      );
     height: 100vh;
     padding: 60px 80px;
     width: 100vw;
@@ -125,4 +153,96 @@
     color: #42b983;
     background-color: transparent;
   }
+
+  .vue-suggestion {
+  width: 50%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.vue-suggestion .vs__input-group .vs__input {
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  line-height: 1.25;
+  color: #464a4c;
+  outline: none;
+  background-color: #fff;.vue-suggestion {
+  width: 50%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.vue-suggestion .vs__input-group .vs__input {
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  line-height: 1.25;
+  color: #464a4c;
+  outline: none;
+  background-color: #fff;
+  background-image: none;
+  background-clip: padding-box;
+  border: 1px solid #cecece;
+  border-radius: 0.25rem;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.vue-suggestion .vs__input-group .vs__input:focus {
+  border: 1px solid #023d7b;
+}
+.vue-suggestion .vs__list {
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-top: none;
+  max-height: 400px;
+  overflow-y: auto;
+  border-bottom: 1px solid #023d7b;
+}
+.vue-suggestion .vs__list .vs__list-item {
+  cursor: pointer;
+  background-color: #fff;
+  padding: 10px;
+  border-left: 10px solid #023d7b;
+  border-right: 1px solid #023d7b;
+}
+.vue-suggestion .vs__list .vs__list-item:last-child {
+  border-bottom: none;
+}
+.vue-suggestion .vs__list .vs__list-item:hover {
+  background-color: #eee !important;
+}
+  background-image: none;
+  background-clip: padding-box;
+  border: 1px solid #cecece;
+  border-radius: 0.25rem;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.vue-suggestion .vs__input-group .vs__input:focus {
+  border: 1px solid #023d7b;
+}
+.vue-suggestion .vs__list {
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-top: none;
+  max-height: 400px;
+  overflow-y: auto;
+  border-bottom: 1px solid #023d7b;
+}
+.vue-suggestion .vs__list .vs__list-item {
+  cursor: pointer;
+  background-color: #fff;
+  padding: 10px;
+  border-left: 10px solid #023d7b;
+  border-right: 1px solid #023d7b;
+}
+.vue-suggestion .vs__list .vs__list-item:last-child {
+  border-bottom: none;
+}
+.vue-suggestion .vs__list .vs__list-item:hover {
+  background-color: #eee !important;
+}
 </style>

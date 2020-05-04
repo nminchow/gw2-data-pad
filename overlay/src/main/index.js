@@ -1,5 +1,10 @@
 import { app, BrowserWindow } from 'electron' // eslint-disable-line
 
+const ioHook = require('iohook');
+// const forceFocus = require('forcefocus');
+require('windows-foreground-love').allowSetForegroundWindow();
+const ks = require('node-key-sender');
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -14,15 +19,47 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`;
 
 function createWindow() {
+  ioHook.start();
+
+  ioHook.on('keydown', (keypress) => {
+    const { rawcode: rawCode, shiftKey } = keypress;
+    // console.log(keypress);
+    if ((rawCode === 13 && shiftKey)) {
+      console.log('showing');
+      // mainWindow.setAlwaysOnTop(true);
+      // mainWindow.maximize();
+      mainWindow.show();
+      // mainWindow.setAlwaysOnTop(false);
+      // forceFocus.focusWindow(mainWindow);
+      // mainWindow.focus();
+      // app.focus();
+    }
+
+    if (rawCode === 27) {
+      console.log('hiding');
+      mainWindow.hide();
+      ks.sendCombination(['alt', 'tab']);
+      setTimeout(() => ks.sendCombination(['control', 'v']), 100);
+    }
+  });
+
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
-    useContentSize: true,
-    width: 1000,
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+    },
+    frame: false,
+    // transparent: true,
+    show: false,
   });
-
+  mainWindow.maximize();
+  mainWindow.minimize();
+  mainWindow.setFullScreen(true);
+  mainWindow.hide();
   mainWindow.loadURL(winURL);
 
   mainWindow.on('closed', () => {
@@ -43,6 +80,12 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+app.on('before-quit', () => {
+  ioHook.unload();
+  ioHook.stop();
+});
+
 
 /**
  * Auto Updater
