@@ -11,5 +11,15 @@
 </script>
 
 <style>
-  /* CSS */
+
+#app {
+  margin-top: 15rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  flex-direction: column;
+  flex: 1;
+}
 </style>

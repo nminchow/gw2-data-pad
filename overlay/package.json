@@ -63,7 +63,8 @@
     "vue-suggestion": "^1.1.0",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0",
-    "windows-foreground-love": "^0.4.0"
+    "windows-foreground-love": "^0.4.0",
+    "electron": "^6.1.10"
   },
   "devDependencies": {
     "ajv": "^6.5.0",
@@ -82,7 +83,6 @@
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
-    "electron": "^6.1.10",
     "electron-builder": "^20.19.2",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, ipcMain } from 'electron' // eslint-disable-line
 
 const ioHook = require('iohook');
 // const forceFocus = require('forcefocus');
@@ -18,6 +18,19 @@ const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`;
 
+
+const close = (paste = false) => {
+  if (!mainWindow.isFocused()) return;
+  mainWindow.hide();
+  ks.sendCombination(['alt', 'tab']);
+  if (!paste) return;
+  setTimeout(() => ks.sendCombination(['control', 'v']), 100);
+};
+
+ipcMain.on('close', (_event, paste) => {
+  close(paste);
+});
+
 function createWindow() {
   ioHook.start();
 
@@ -36,10 +49,7 @@ function createWindow() {
     }
 
     if (rawCode === 27) {
-      console.log('hiding');
-      mainWindow.hide();
-      ks.sendCombination(['alt', 'tab']);
-      setTimeout(() => ks.sendCombination(['control', 'v']), 100);
+      close();
     }
   });
 
@@ -53,9 +63,10 @@ function createWindow() {
       nodeIntegrationInWorker: true,
     },
     frame: false,
-    // transparent: true,
+    transparent: true,
     show: false,
   });
+
   mainWindow.maximize();
   mainWindow.minimize();
   mainWindow.setFullScreen(true);
