@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <b>#{{ item.id }}</b>
-    <span>{{ item.text }}</span>
-  </div>
+  <webview :src="item.url" style="height: 80vh; width: 90vw;"/>
 </template>
 
 <script>
@@ -11,7 +8,7 @@ export default {
     item: { required: true },
   },
   mounted() {
-    console.log('mounted');
+    console.log('webmounte');
   },
 };
 </script>

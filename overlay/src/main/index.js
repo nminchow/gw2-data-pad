@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, ipcMain, clipboard } from 'electron' // eslint-disable-line
 
 const ioHook = require('iohook');
 // const forceFocus = require('forcefocus');
@@ -39,6 +39,8 @@ function createWindow() {
     // console.log(keypress);
     if ((rawCode === 13 && shiftKey)) {
       console.log('showing');
+      mainWindow.webContents.send('focused');
+      clipboard.clear();
       // mainWindow.setAlwaysOnTop(true);
       // mainWindow.maximize();
       mainWindow.show();
@@ -49,7 +51,7 @@ function createWindow() {
     }
 
     if (rawCode === 27) {
-      close();
+      close(true);
     }
   });
 
@@ -61,6 +63,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
+      webviewTag: true,
     },
     frame: false,
     transparent: true,

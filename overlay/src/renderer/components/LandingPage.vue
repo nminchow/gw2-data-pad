@@ -1,55 +1,92 @@
+/* eslint-disable no-unreachable */
+/* eslint-disable no-unused-vars */
 <template>
   <main>
-      <vue-suggestion :items="displayedItems"
-              v-model="item"
-              :setLabel="setLabel"
-              :itemTemplate="itemTemplate"
-              @changed="inputChange"
-              @selected="itemSelected">
-      </vue-suggestion>
+      <span class="suggestionWrapper" >
+        <vue-suggestion :items="displayedItems"
+                v-model="item"
+                :setLabel="setLabel"
+                :itemTemplate="itemTemplate"
+                @changed="inputChange"
+                @selected="itemSelected">
+        </vue-suggestion>
+      </span>
+      <br/>
+      <span v-for="webTab in webTabs" :key="webTab.order">
+        <wiki-tab :item="webTab"/>
+      </span>
   </main>
 </template>
 
 <script>
+  import wikijs from 'wikijs';
+  import { debounce } from 'lodash';
   import { VueSuggestion } from 'vue-suggestion';
-  import { ipcRenderer, clipboard } from 'electron';
+  import { ipcRenderer } from 'electron';
   import SystemInformation from './LandingPage/SystemInformation';
   import itemTemplate from './LandingPage/ItemTemplate';
+  import wikiTab from './LandingPage/WikiTab';
 
+  const wiki = wikijs({
+    apiUrl: 'https://wiki.guildwars2.com/api.php',
+  });
+
+  const onClick = () => {};
+
+  // eslint-disable-next-line func-names
+  const inputChange = debounce(function (text) {
+    if (!text) return;
+    wiki.search(text).then(({ results }) => {
+      if (!results.length) return;
+      this.displayedItems = results.map((text, order) => ({
+        text,
+        onClick: () => {
+          this.webTabs.pop();
+          this.webTabs.push({ order, url: `https://wiki.guildwars2.com/wiki/${text}` });
+        },
+      }));
+    });
+  }, 500);
 
   export default {
     name: 'landing-page',
-    components: { SystemInformation, VueSuggestion },
+    components: { SystemInformation, VueSuggestion, wikiTab },
     data() {
       return {
         item: {},
         items: [
-          { id: 1, name: 'Golden Retriever' },
-          { id: 2, name: 'Cat' },
-          { id: 3, name: 'Squirrel' },
+          { id: 1, text: 'Golden Retriever', onClick },
+          { id: 2, text: 'Cat', onClick },
+          { id: 3, text: 'Squirrel', onClick },
         ],
         displayedItems: [],
+        webTabs: [],
         itemTemplate,
       };
+    },
+    mounted() {
+      ipcRenderer.on('focused', () => {
+        this.focusInput();
+      });
     },
     methods: {
       open(link) {
         this.$electron.shell.openExternal(link);
       },
       itemSelected(item) {
-        this.item = item;
-        console.log(this.item);
-        clipboard.writeText(item.name);
-        ipcRenderer.send('close', true);
+        // this.item = item;
+        // console.log(this.item);
+        // clipboard.writeText(item.name);
+        // ipcRenderer.send('close', true);
+        item.onClick();
       },
       setLabel(item) {
         return item.name;
       },
-      inputChange(text) {
-        // your search method
-        this.displayedItems = this.items.filter(item => item.name.includes(text));
-        // now `items` will be showed in the suggestion list
+      focusInput() {
+        document.getElementsByClassName('vs__input')[0].focus();
       },
+      inputChange,
     },
   };
 </script>
@@ -64,6 +101,12 @@
       max-height: 400px;
       overflow-y: auto;
       border-bottom: 1px solid #023d7b;
+      display: inline-block;
+  }
+  .suggestionWrapper {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
   }
   .vue-suggestion .vs__input {
     width: 45vw;

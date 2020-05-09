@@ -13,7 +13,7 @@
 <style>
 
 #app {
-  margin-top: 15rem;
+  margin-top: 15vh;
   width: 100%;
   display: flex;
   justify-content: center;
