@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b>#{{ item.id }}</b>
+    <font-awesome-icon :icon="item.icon" />
     <span>{{ item.text }}</span>
   </div>
 </template>

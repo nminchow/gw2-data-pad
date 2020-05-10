@@ -40,6 +40,7 @@
       if (!results.length) return;
       this.displayedItems = results.map((text, order) => ({
         text,
+        icon: ['fab', 'wikipedia-w'],
         onClick: () => {
           this.webTabs.pop();
           this.webTabs.push({ order, url: `https://wiki.guildwars2.com/wiki/${text}` });

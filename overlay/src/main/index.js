@@ -24,7 +24,7 @@ const close = (paste = false) => {
   mainWindow.hide();
   ks.sendCombination(['alt', 'tab']);
   if (!paste) return;
-  setTimeout(() => ks.sendCombination(['control', 'v']), 100);
+  setTimeout(() => ks.sendCombination(['control', 'v']), 2000);
 };
 
 ipcMain.on('close', (_event, paste) => {
@@ -40,7 +40,7 @@ function createWindow() {
     if ((rawCode === 13 && shiftKey)) {
       console.log('showing');
       mainWindow.webContents.send('focused');
-      clipboard.clear();
+      // clipboard.clear();
       // mainWindow.setAlwaysOnTop(true);
       // mainWindow.maximize();
       mainWindow.show();
