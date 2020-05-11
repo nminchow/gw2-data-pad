@@ -1,9 +1,9 @@
 import { app, BrowserWindow, ipcMain, clipboard } from 'electron' // eslint-disable-line
+import { keyTap } from 'robotjs';
 
 const ioHook = require('iohook');
 // const forceFocus = require('forcefocus');
 require('windows-foreground-love').allowSetForegroundWindow();
-const ks = require('node-key-sender');
 
 /**
  * Set `__static` path to static files in production
@@ -13,6 +13,8 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\') // eslint-disable-line
 }
 
+let visible = false;
+
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
@@ -20,11 +22,16 @@ const winURL = process.env.NODE_ENV === 'development'
 
 
 const close = (paste = false) => {
-  if (!mainWindow.isFocused()) return;
+  if (!mainWindow.isFocused() || !visible) return;
+  visible = false;
   mainWindow.hide();
-  ks.sendCombination(['alt', 'tab']);
+  // ks.sendCombination(['alt', 'tab']);
+  keyTap('tab', ['alt']);
   if (!paste) return;
-  setTimeout(() => ks.sendCombination(['control', 'v']), 2000);
+  console.log(clipboard.readText());
+  setTimeout(() => keyTap('v', ['control']), 200);
+  // setTimeout(() => keyTap('z'), 100);
+  // setTimeout(() => clipboard.paste, 3000);
 };
 
 ipcMain.on('close', (_event, paste) => {
@@ -34,16 +41,19 @@ ipcMain.on('close', (_event, paste) => {
 function createWindow() {
   ioHook.start();
 
+  console.log(process.version);
+
   ioHook.on('keydown', (keypress) => {
     const { rawcode: rawCode, shiftKey } = keypress;
     // console.log(keypress);
     if ((rawCode === 13 && shiftKey)) {
       console.log('showing');
       mainWindow.webContents.send('focused');
-      // clipboard.clear();
+      clipboard.clear();
       // mainWindow.setAlwaysOnTop(true);
       // mainWindow.maximize();
       mainWindow.show();
+      visible = true;
       // mainWindow.setAlwaysOnTop(false);
       // forceFocus.focusWindow(mainWindow);
       // mainWindow.focus();
@@ -51,6 +61,7 @@ function createWindow() {
     }
 
     if (rawCode === 27) {
+      console.log('closing');
       close(true);
     }
   });
@@ -67,11 +78,12 @@ function createWindow() {
     },
     frame: false,
     transparent: true,
-    show: false,
+    fullscreen: true,
+    // show: false,
   });
-
-  mainWindow.maximize();
-  mainWindow.minimize();
+  // mainWindow.maximize();
+  // mainWindow.minimize();
+  // mainWindow.maximize();
   mainWindow.setFullScreen(true);
   mainWindow.hide();
   mainWindow.loadURL(winURL);

@@ -12,9 +12,12 @@
         </vue-suggestion>
       </span>
       <br/>
-      <span v-for="webTab in webTabs" :key="webTab.order">
-        <wiki-tab :item="webTab"/>
-      </span>
+      <vue-tabs>
+        <v-tab v-for="(webTab, index) in webTabs" :key="webTab.order" :title="webTab.title">
+          <div slot="title">{{webTab.title}} <span @click.stop="removeTab(index)">x</span></div>
+          <wiki-tab :item="webTab"/>
+        </v-tab>
+      </vue-tabs>
   </main>
 </template>
 
@@ -23,7 +26,7 @@
   import { debounce } from 'lodash';
   import { VueSuggestion } from 'vue-suggestion';
   import { ipcRenderer } from 'electron';
-  import SystemInformation from './LandingPage/SystemInformation';
+  import { VueTabs, VTab } from 'vue-nav-tabs/dist/vue-tabs.js';
   import itemTemplate from './LandingPage/ItemTemplate';
   import wikiTab from './LandingPage/WikiTab';
 
@@ -34,16 +37,18 @@
   const onClick = () => {};
 
   // eslint-disable-next-line func-names
-  const inputChange = debounce(function (text) {
+  const callApi = debounce(function (text, context) {
+    console.log('here');
+    console.log(text);
     if (!text) return;
     wiki.search(text).then(({ results }) => {
-      if (!results.length) return;
-      this.displayedItems = results.map((text, order) => ({
+      console.log('setting');
+      console.log(this.webTabs);
+      context.displayedItems = results.map((text, order) => ({
         text,
         icon: ['fab', 'wikipedia-w'],
         onClick: () => {
-          this.webTabs.pop();
-          this.webTabs.push({ order, url: `https://wiki.guildwars2.com/wiki/${text}` });
+          context.webTabs.push({ title: text, order, url: `https://wiki.guildwars2.com/wiki/${text}` });
         },
       }));
     });
@@ -51,7 +56,9 @@
 
   export default {
     name: 'landing-page',
-    components: { SystemInformation, VueSuggestion, wikiTab },
+    components: {
+      VueSuggestion, wikiTab, VueTabs, VTab,
+    },
     data() {
       return {
         item: {},
@@ -87,13 +94,23 @@
       focusInput() {
         document.getElementsByClassName('vs__input')[0].focus();
       },
-      inputChange,
+      inputChange(text) {
+        this.displayedItems = [];
+        callApi(text, this);
+      },
+      removeTab(index) {
+        this.webTabs.splice(index, 1);
+      },
     },
   };
 </script>
 
 <style>
-    @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+  @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+  .vue-tabs .nav-tabs {
+    border-bottom: none;
+  }
+
   .vue-suggestion .vs__list {
       width: 45vw;
       text-align: left;

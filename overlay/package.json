@@ -10,6 +10,7 @@
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
+    "rebuild": "npm rebuild --runtime=electron --target=6.1.10 --disturl=https://atom.io/download/atom-shell --abi=73",
     "dev": "node .electron-vue/dev-runner.js",
     "serve": "node .electron-vue/dev-runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
@@ -17,7 +18,9 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": "npm run lint:fix"
+    "postinstall": "npm run lint:fix",
+    "wat": "electron -v && electron -a",
+    "shell": "node"
   },
   "build": {
     "productName": "data-core",
@@ -62,9 +65,10 @@
     "electron": "^6.1.10",
     "iohook": "^0.6.5",
     "lodash": "^4.17.15",
-    "node-key-sender": "^1.0.11",
+    "robotjs": "^0.6.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
+    "vue-nav-tabs": "^0.5.7",
     "vue-router": "^3.0.1",
     "vue-suggestion": "^1.1.0",
     "vuex": "^3.0.1",
