@@ -34,6 +34,36 @@
     apiUrl: 'https://wiki.guildwars2.com/api.php',
   });
 
+  const goToTab = (tab, context) => {
+    context.webTabs.push(tab);
+    // eslint-disable-next-line no-return-assign
+    setTimeout(() => context.activeTab = tab.title, 0);
+  };
+
+  const commands = context => [
+    {
+      text: 'help',
+      icon: 'info-circle',
+      onClick: () => {
+        goToTab({ title: 'Welcome!', url: 'http://localhost:8080/' }, context);
+      },
+    },
+    {
+      text: 'clear',
+      icon: 'eraser',
+      onClick: () => {
+        context.webTabs = [];
+      },
+    },
+    {
+      text: 'updates',
+      icon: 'list-alt',
+      onClick: () => {
+        goToTab({ title: 'Game Updates', url: 'https://wiki.guildwars2.com/wiki/Game_updates' }, context);
+      },
+    },
+  ];
+
   const onClick = () => {};
 
   // eslint-disable-next-line func-names
@@ -44,13 +74,11 @@
     wiki.search(text).then(({ results }) => {
       console.log('setting');
       console.log(this.webTabs);
-      context.displayedItems = results.map((text, order) => ({
+      context.displayedItems = results.map(text => ({
         text,
         icon: ['fab', 'wikipedia-w'],
         onClick: () => {
-          context.webTabs.push({ title: text, order, url: `https://wiki.guildwars2.com/wiki/${text}` });
-          // eslint-disable-next-line no-return-assign
-          setTimeout(() => context.activeTab = text, 0);
+          goToTab({ title: text, url: `https://wiki.guildwars2.com/wiki/${text}` }, context);
         },
       }));
     });
@@ -98,8 +126,13 @@
         document.getElementsByClassName('vs__input')[0].focus();
       },
       inputChange(text) {
-        this.displayedItems = [];
-        callApi(text, this);
+        if (text.startsWith('>')) {
+          const keyword = text.split('>')[1].trim().toLowerCase();
+          this.displayedItems = commands(this).filter(({ text }) => text.includes(keyword));
+        } else {
+          this.displayedItems = [];
+          callApi(text, this);
+        }
       },
       removeTab(index) {
         this.webTabs.splice(index, 1);
