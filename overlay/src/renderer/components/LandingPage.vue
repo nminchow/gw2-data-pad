@@ -26,6 +26,7 @@
   import { debounce } from 'lodash';
   import { VueSuggestion } from 'vue-suggestion';
   import { ipcRenderer } from 'electron';
+  import { mapActions, mapGetters } from 'vuex';
   import { VueTabs, VTab } from 'vue-nav-tabs/dist/vue-tabs.js';
   import itemTemplate from './LandingPage/ItemTemplate';
   import wikiTab from './LandingPage/WikiTab';
@@ -62,19 +63,29 @@
         goToTab({ title: 'Game Updates', url: 'https://wiki.guildwars2.com/wiki/Game_updates' }, context);
       },
     },
+    {
+      text: 'bookmark',
+      icon: 'bookmark',
+      onClick: () => {
+        if (!context.activeTab) return;
+        context.addBookmark(context.activeTab);
+      },
+    },
+    {
+      text: 'clear bookmarks',
+      icon: ['far', 'bookmark'],
+      onClick: () => {
+        context.clearBookmarks();
+      },
+    },
   ];
 
-  const onClick = () => {};
-
-  // eslint-disable-next-line func-names
+  // eslint-disable-next-line prefer-arrow-callback, func-names
   const callApi = debounce(function (text, context) {
-    console.log('here');
-    console.log(text);
     if (!text) return;
     wiki.search(text).then(({ results }) => {
       console.log('setting');
-      console.log(this.webTabs);
-      context.displayedItems = results.map(text => ({
+      context.searchResults = results.map(text => ({
         text,
         icon: ['fab', 'wikipedia-w'],
         onClick: () => {
@@ -93,13 +104,10 @@
       return {
         activeTab: 0,
         item: {},
-        items: [
-          { id: 1, text: 'Golden Retriever', onClick },
-          { id: 2, text: 'Cat', onClick },
-          { id: 3, text: 'Squirrel', onClick },
-        ],
-        displayedItems: [],
+        items: [],
+        localItems: [],
         webTabs: [],
+        searchResults: [],
         itemTemplate,
       };
     },
@@ -108,15 +116,21 @@
         this.focusInput();
       });
     },
+    computed: {
+      displayedItems() {
+        return this.localItems.concat(this.searchResults);
+      },
+    },
     methods: {
+      ...mapActions('bookmarks', {
+        addBookmark: 'add',
+        clearBookmarks: 'clear',
+      }),
+      ...mapGetters('bookmarks', ['bookmarks']),
       open(link) {
         this.$electron.shell.openExternal(link);
       },
       itemSelected(item) {
-        // this.item = item;
-        // console.log(this.item);
-        // clipboard.writeText(item.name);
-        // ipcRenderer.send('close', true);
         item.onClick();
       },
       setLabel(item) {
@@ -126,11 +140,22 @@
         document.getElementsByClassName('vs__input')[0].focus();
       },
       inputChange(text) {
+        this.localItems = [];
+        this.searchResults = [];
         if (text.startsWith('>')) {
           const keyword = text.split('>')[1].trim().toLowerCase();
-          this.displayedItems = commands(this).filter(({ text }) => text.includes(keyword));
+          this.localItems = commands(this).filter(({ text }) => text.includes(keyword));
         } else {
-          this.displayedItems = [];
+          const bookmarkMatches = this.bookmarks()
+            .filter(bookmark => bookmark.toLowerCase().includes(text.toLowerCase()))
+            .map(text => ({
+              text,
+              icon: ['far', 'bookmark'],
+              onClick: () => {
+                goToTab({ title: text, url: `https://wiki.guildwars2.com/wiki/${text}` }, this);
+              },
+            }));
+          this.localItems = bookmarkMatches;
           callApi(text, this);
         }
       },

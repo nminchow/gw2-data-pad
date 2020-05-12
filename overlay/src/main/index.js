@@ -1,6 +1,11 @@
 import { app, BrowserWindow, ipcMain, clipboard, Tray, Menu } from 'electron' // eslint-disable-line
 import { keyTap } from 'robotjs';
 
+// need this to get vuex store working for some reason
+// https://github.com/vue-electron/vuex-electron/issues/12
+// eslint-disable-next-line no-unused-vars
+import store from '../renderer/store';
+
 const ioHook = require('iohook');
 // const forceFocus = require('forcefocus');
 require('windows-foreground-love').allowSetForegroundWindow();
