@@ -12,9 +12,9 @@
         </vue-suggestion>
       </span>
       <br/>
-      <vue-tabs>
-        <v-tab v-for="(webTab, index) in webTabs" :key="webTab.order" :title="webTab.title">
-          <div slot="title">{{webTab.title}} <span @click.stop="removeTab(index)">x</span></div>
+      <vue-tabs v-model="activeTab">
+        <v-tab v-for="(webTab, index) in webTabs" :key="index" :title="webTab.title">
+          <div slot="title">{{webTab.title}} <span class="close" @click.stop="removeTab(index)"><font-awesome-icon icon="times" /></span></div>
           <wiki-tab :item="webTab"/>
         </v-tab>
       </vue-tabs>
@@ -49,6 +49,8 @@
         icon: ['fab', 'wikipedia-w'],
         onClick: () => {
           context.webTabs.push({ title: text, order, url: `https://wiki.guildwars2.com/wiki/${text}` });
+          // eslint-disable-next-line no-return-assign
+          setTimeout(() => context.activeTab = text, 0);
         },
       }));
     });
@@ -61,6 +63,7 @@
     },
     data() {
       return {
+        activeTab: 0,
         item: {},
         items: [
           { id: 1, text: 'Golden Retriever', onClick },
@@ -111,6 +114,23 @@
     border-bottom: none;
   }
 
+  .close {
+    cursor: pointer;
+    margin-left: 1rem;
+  }
+
+  .tab {
+    font-weight: bold;
+  }
+
+  .vue-tabs .nav-tabs > li {
+    background: black;
+  }
+
+  .vue-tabs .nav > li > a {
+    padding: 5px 15px;
+  }
+
   .vue-suggestion .vs__list {
       width: 45vw;
       text-align: left;
@@ -120,6 +140,7 @@
       overflow-y: auto;
       border-bottom: 1px solid #023d7b;
       display: inline-block;
+      z-index: 100;
   }
   .suggestionWrapper {
     display: flex;
@@ -128,6 +149,7 @@
   }
   .vue-suggestion .vs__input {
     width: 45vw;
+    font-size: 1.4rem;
   }
   .vue-suggestion .vs__list .vs__list-item {
       background-color: #fff;

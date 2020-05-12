@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, clipboard } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, ipcMain, clipboard, Tray, Menu } from 'electron' // eslint-disable-line
 import { keyTap } from 'robotjs';
 
 const ioHook = require('iohook');
@@ -16,6 +16,7 @@ if (process.env.NODE_ENV !== 'development') {
 let visible = false;
 
 let mainWindow;
+let tray;
 const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`;
@@ -26,7 +27,7 @@ const close = (paste = false) => {
   visible = false;
   mainWindow.hide();
   // ks.sendCombination(['alt', 'tab']);
-  keyTap('tab', ['alt']);
+  keyTap('escape', ['alt']);
   if (!paste) return;
   console.log(clipboard.readText());
   setTimeout(() => keyTap('v', ['control']), 200);
@@ -65,6 +66,12 @@ function createWindow() {
       close(true);
     }
   });
+
+  tray = new Tray('./core.png');
+  tray.setContextMenu(Menu.buildFromTemplate([
+    { label: 'Quit', click() { app.quit(); } },
+  ]));
+  tray.setToolTip('GW2 Data Pad');
 
   /**
    * Initial window options
