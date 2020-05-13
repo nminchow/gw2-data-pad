@@ -23,3 +23,10 @@ Clears all open tabs.
 
 Open the game-updates page.
 
+### > bookmark
+
+Bookmark the open tab.
+
+### > clear bookmarks
+
+Clear all bookmarks.
