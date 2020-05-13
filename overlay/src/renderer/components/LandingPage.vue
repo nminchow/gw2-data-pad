@@ -167,7 +167,6 @@
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
   .vue-tabs .nav-tabs {
     border-bottom: none;
   }
@@ -181,7 +180,7 @@
     font-weight: bold;
   }
 
-  .vue-tabs .nav-tabs > li {
+  .vue-tabs .nav-tabs > li > a {
     background: black;
   }
 

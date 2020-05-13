@@ -10,8 +10,5 @@ export default {
   props: {
     item: { required: true },
   },
-  mounted() {
-    console.log('mounted');
-  },
 };
 </script>
