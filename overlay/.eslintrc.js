@@ -12,6 +12,11 @@ module.exports = {
   globals: {
     __static: true
   },
+  settings: {
+    "import/core-modules": [
+      "electron",
+    ]
+  },
   plugins: [
     'html'
   ],

@@ -72,7 +72,7 @@ function createWindow() {
     }
   });
 
-  tray = new Tray('./core.png');
+  tray = new Tray('/core.png');
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Quit', click() { app.quit(); } },
   ]));

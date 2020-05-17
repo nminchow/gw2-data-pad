@@ -46,7 +46,7 @@
       text: 'help',
       icon: 'info-circle',
       onClick: () => {
-        goToTab({ title: 'Welcome!', url: 'http://localhost:8080/' }, context);
+        goToTab({ title: 'Welcome!', url: 'https://nminchow.github.io/gw2-overlay/' }, context);
       },
     },
     {

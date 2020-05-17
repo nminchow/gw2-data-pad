@@ -50,7 +50,11 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "target": ["portable"],
+      "icon": "build/icons/core.png"
+    },
+    "portable": {
+      "artifactName": "gw2-data-pad.exe"
     },
     "linux": {
       "icon": "build/icons"
@@ -63,7 +67,6 @@
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "axios": "^0.18.0",
-    "electron": "^6.1.10",
     "iohook": "^0.6.5",
     "lodash": "^4.17.15",
     "robotjs": "^0.6.0",
@@ -78,6 +81,7 @@
     "windows-foreground-love": "^0.4.0"
   },
   "devDependencies": {
+    "electron": "^6.1.10",
     "ajv": "^6.5.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
