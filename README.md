@@ -2,7 +2,7 @@
 
 > The datapad is an overlay to help keep relevant Guild Wars 2 data at your fingertips.
 
-[Download](./overlay/build/gw2-data-pad.exe)
+[Download](https://github.com/nminchow/gw2-overlay/raw/master/overlay/build/gw2-data-pad.exe)
 
 To open the data-pad from in-game, press `shift` + `enter`. Then type `> help` for some basic instructions.
 
