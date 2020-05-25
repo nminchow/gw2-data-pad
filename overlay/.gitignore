@@ -2,6 +2,7 @@
 dist/electron/*
 dist/web/*
 build/*
+!build/gw2-data-pad.exe
 !build/icons
 npm-debug.log
 npm-debug.log.*
