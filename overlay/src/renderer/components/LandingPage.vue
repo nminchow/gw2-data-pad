@@ -95,6 +95,13 @@
     });
   }, 500);
 
+  const loadingItem = {
+    text: 'Searching...',
+    icon: ['fas', 'cog'],
+    spin: true,
+    onClick: () => {},
+  };
+
   export default {
     name: 'landing-page',
     components: {
@@ -156,6 +163,7 @@
               },
             }));
           this.localItems = bookmarkMatches;
+          this.searchResults.push(loadingItem);
           callApi(text, this);
         }
       },

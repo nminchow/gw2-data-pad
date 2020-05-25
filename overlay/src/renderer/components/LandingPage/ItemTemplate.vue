@@ -1,6 +1,6 @@
 <template>
   <div>
-    <font-awesome-icon fixed-width :icon="item.icon" />
+    <font-awesome-icon fixed-width :icon="item.icon" :spin="item.spin" />
     <span>{{ item.text }}</span>
   </div>
 </template>

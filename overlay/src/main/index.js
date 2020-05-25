@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, clipboard, Tray, Menu } from 'electron' // eslint-disable-line
 import { keyTap } from 'robotjs';
+import path from 'path';
 
 // need this to get vuex store working for some reason
 // https://github.com/vue-electron/vuex-electron/issues/12
@@ -72,7 +73,7 @@ function createWindow() {
     }
   });
 
-  tray = new Tray('/core.png');
+  tray = new Tray(path.join(__static, '/core.png'));
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Quit', click() { app.quit(); } },
   ]));
