@@ -68,7 +68,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "axios": "^0.18.0",
     "iohook": "^0.6.5",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "robotjs": "^0.6.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
